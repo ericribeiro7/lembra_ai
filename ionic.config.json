@@ -1,0 +1,7 @@
+{
+  "name": "Lembra Aí",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
