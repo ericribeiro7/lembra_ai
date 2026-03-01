@@ -1,0 +1,12 @@
+{
+  "appId": "com.lembraai.app",
+  "appName": "Lembra Aí",
+  "webDir": "frontend/dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true,
+    "path": "frontend/android"
+  }
+}
