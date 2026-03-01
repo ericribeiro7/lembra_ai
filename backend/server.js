@@ -33,6 +33,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     month TEXT,
+    location TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
@@ -45,6 +46,13 @@ db.exec(`
     FOREIGN KEY (list_id) REFERENCES shopping_lists(id) ON DELETE CASCADE
   );
 `);
+
+// Add location column to shopping_lists if it doesn't exist (migration)
+try {
+  db.exec(`ALTER TABLE shopping_lists ADD COLUMN location TEXT`);
+} catch (e) {
+  // Column already exists, ignore error
+}
 
 // ============ NOTES API ============
 
@@ -102,8 +110,8 @@ app.get('/api/shopping-lists', (req, res) => {
 // Create shopping list
 app.post('/api/shopping-lists', (req, res) => {
   try {
-    const { name, month } = req.body;
-    const result = db.prepare('INSERT INTO shopping_lists (name, month) VALUES (?, ?)').run(name, month || null);
+    const { name, month, location } = req.body;
+    const result = db.prepare('INSERT INTO shopping_lists (name, month, location) VALUES (?, ?, ?)').run(name, month || null, location || null);
     const newList = db.prepare('SELECT * FROM shopping_lists WHERE id = ?').get(result.lastInsertRowid);
     res.status(201).json({ ...newList, total_items: 0, pending_items: 0 });
   } catch (err) {
