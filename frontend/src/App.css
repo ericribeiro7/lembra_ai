@@ -13,10 +13,14 @@
 .app {
   max-width: 480px;
   margin: 0 auto;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--bg-white);
   position: relative;
   padding-bottom: 80px;
+}
+
+.app.keyboard-open {
+  padding-bottom: 0;
 }
 
 /* Header */
@@ -224,6 +228,7 @@
 
 .add-item-form {
   display: flex;
+  align-items: center;
   gap: 10px;
   margin-bottom: 25px;
   background: var(--bg-white);
@@ -234,6 +239,7 @@
 
 .add-item-input {
   flex: 1;
+  min-width: 0;
   padding: 14px 18px;
   border: none;
   border-radius: 12px;
@@ -251,6 +257,7 @@
 .add-item-btn {
   width: 50px;
   height: 50px;
+  flex-shrink: 0;
   background: var(--green-primary);
   color: white;
   border: none;
@@ -550,6 +557,10 @@
   z-index: 1000;
 }
 
+.bottom-nav.hidden {
+  display: none;
+}
+
 .nav-item {
   display: flex;
   flex-direction: column;
@@ -723,7 +734,11 @@
 
 /* Content area */
 .content {
-  min-height: calc(100vh - 80px);
+  min-height: calc(100dvh - 80px);
+}
+
+.app.keyboard-open .fab {
+  display: none;
 }
 
 /* Animations */
@@ -746,7 +761,7 @@
 /* Shopping Lists Page */
 .shopping-lists-page {
   background: var(--bg-gray);
-  min-height: calc(100vh - 80px);
+  min-height: calc(100dvh - 80px);
 }
 
 .lists-content {
@@ -986,5 +1001,23 @@
 .btn-save:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+@media (max-width: 380px) {
+  .add-item-form {
+    gap: 8px;
+    padding: 4px;
+  }
+
+  .add-item-input {
+    padding: 12px 14px;
+    font-size: 0.95rem;
+  }
+
+  .add-item-btn {
+    width: 46px;
+    height: 46px;
+    font-size: 1.6rem;
+  }
 }
 

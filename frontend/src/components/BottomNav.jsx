@@ -1,4 +1,4 @@
-function BottomNav({ activeView, setActiveView }) {
+function BottomNav({ activeView, setActiveView, hidden = false }) {
   const navItems = [
     { id: 'home', icon: '🏠', label: 'INÍCIO' },
     { id: 'shopping', icon: '📋', label: 'LISTAS' },
@@ -7,7 +7,7 @@ function BottomNav({ activeView, setActiveView }) {
   ]
 
   return (
-    <nav className="bottom-nav">
+    <nav className={`bottom-nav ${hidden ? 'hidden' : ''}`}>
       {navItems.map(item => (
         <button
           key={item.id}

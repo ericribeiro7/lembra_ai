@@ -19,6 +19,7 @@ function App() {
   const [showAddNoteModal, setShowAddNoteModal] = useState(false)
   const [showAddListModal, setShowAddListModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
 
   // Carregar dados do backend
   useEffect(() => {
@@ -32,6 +33,58 @@ function App() {
       fetchListItems(selectedList.id)
     }
   }, [selectedList])
+
+  // Detectar teclado virtual em dispositivos móveis
+  useEffect(() => {
+    const viewport = window.visualViewport
+    if (!viewport) return
+
+    const handleViewportResize = () => {
+      const keyboardHeight = window.innerHeight - viewport.height
+      setIsKeyboardOpen(keyboardHeight > 150)
+    }
+
+    viewport.addEventListener('resize', handleViewportResize)
+    handleViewportResize()
+
+    return () => {
+      viewport.removeEventListener('resize', handleViewportResize)
+    }
+  }, [])
+
+  // Fallback por foco em inputs/textareas
+  useEffect(() => {
+    const isTextField = (element) => {
+      if (!element) return false
+      return (
+        element.tagName === 'INPUT' ||
+        element.tagName === 'TEXTAREA' ||
+        element.isContentEditable
+      )
+    }
+
+    const handleFocusIn = (event) => {
+      if (isTextField(event.target)) {
+        setIsKeyboardOpen(true)
+      }
+    }
+
+    const handleFocusOut = () => {
+      setTimeout(() => {
+        if (!isTextField(document.activeElement)) {
+          setIsKeyboardOpen(false)
+        }
+      }, 100)
+    }
+
+    document.addEventListener('focusin', handleFocusIn)
+    document.addEventListener('focusout', handleFocusOut)
+
+    return () => {
+      document.removeEventListener('focusin', handleFocusIn)
+      document.removeEventListener('focusout', handleFocusOut)
+    }
+  }, [])
 
   const fetchNotes = async () => {
     try {
@@ -246,26 +299,30 @@ function App() {
   }
 
   return (
-    <div className="app">
+    <div className={`app ${isKeyboardOpen ? 'keyboard-open' : ''}`}>
       {activeView === 'home' && <Header />}
       
       <main className="content">
         {renderContent()}
       </main>
 
-      {activeView === 'notes' && (
+      {activeView === 'notes' && !isKeyboardOpen && (
         <button className="fab" onClick={() => setShowAddNoteModal(true)}>
           +
         </button>
       )}
 
-      {activeView === 'shopping' && (
+      {activeView === 'shopping' && !isKeyboardOpen && (
         <button className="fab" onClick={() => setShowAddListModal(true)}>
           +
         </button>
       )}
 
-      <BottomNav activeView={activeView} setActiveView={setActiveView} />
+      <BottomNav
+        activeView={activeView}
+        setActiveView={setActiveView}
+        hidden={isKeyboardOpen}
+      />
 
       {showAddNoteModal && (
         <AddNoteModal 
